@@ -296,7 +296,7 @@ else:
 >> As our p-value of 0.16351 is higher than our acceptance_criteria of 0.05 - we retain the null hypothesis, and conclude that: There is no relationship between mailer type and signup rate.  They are independent
 
 
-# print the results (based upon p-value)
+# print the results (based upon Chi Square Statistic)
 if chi2_statistic >= critical_value:
     print(f"As our chi-square statistic of {chi2_statistic} is higher than our critical value of {critical_value} - we reject the null hypothesis, and conclude that: {alternate_hypothesis}")
 else:
