@@ -148,6 +148,7 @@ std      1713.600303
 <br>
 
 From the output above, we can see there’s negative number in Quantity & Unit Price column. Next, we would explore why it is negative.
+<br>
 **Detect negative columns (Quantity <0)**
 <br>
 ```python
@@ -158,7 +159,7 @@ print(df[df.Quantity < 0].head())
 print('')
 
 # Continue to check if Quantity < 0 values are from ‘cancelled’ transactions
-print(‘check if Quantity < 0 are from cancelled transaction')
+print('check if Quantity < 0 are from cancelled transaction')
 df['InvoiceNo'] = df['InvoiceNo'].astype(str)
 df['check_cancel'] = df['InvoiceNo'].apply(lambda x: True if x[0] == 'C' else False)
 print(df[(df.Quantity < 0) & (df.check_cancel == True)].head())
@@ -211,7 +212,7 @@ df[df.UnitPrice < 0].head()
 
 ```
 Output:
-![alt text](/img/posts/python-negative-price.png "Python EDA – Cancelled Transaction")
+![alt text](/img/posts/python-negative-price.png "Python EDA – Price below 0")
 
 <br>
 **Handle inappropriate data types and values**
@@ -263,7 +264,156 @@ check_cancel	bool
 
 dtype: object
 ```
+<br>
+#### Handling missing & duplicate values
+**Overview about missing values**
+```python
+# Check missing values in data
+print('Columns with missing values')
+missing_dict = {
+                'volume': df.isnull().sum(),
+                'percent': df.isnull().sum() / (df.shape[0])}
 
+missing_df = pd.DataFrame.from_dict(missing_dict)
+missing_df.head(10)
+
+```
+Output:
+```
+Columns with missing values
+	volume	percent
+InvoiceNo	0	0.000000
+StockCode	0	0.000000
+Description	0	0.000000
+Quantity	0	0.000000
+InvoiceDate	0	0.000000
+UnitPrice	0	0.000000
+CustomerID	132220	0.249423
+Country	0	0.000000
+check_cancel	0	0.000000
+```
+<br>
+**Check the reason of missing value in CustomerID**
+Approximately 25% of CustomerID is missing value. Firstly, we would need to look at the head and tail of the data to suggest some of the hypotheses behind the missing value. My hypothesis is that there could be system errors that cause the missing value. The next step is I will group missing customers by month to see the pattern of missing value in CustomerID.
+```python
+# Reason why CustomerID has a lot of nulls
+print(df[df.CustomerID.isnull()].head())
+
+print('')
+
+print(df[df.CustomerID.isnull()].tail())
+
+df['Day'] =  pd.to_datetime(df['InvoiceDate']).dt.date
+df['Month'] = df['Day'].apply(lambda x: str(x)[:-3])
+
+df_group_day = df[df.CustomerID.isnull()][['Month','InvoiceNo']].groupby(['Month']).count().reset_index().sort_values(by = ['Month'], ascending = True)
+df_group_day.head(50)
+
+```
+Output:
+```
+  InvoiceNo StockCode                      Description  Quantity  \
+1443    536544     21773  DECORATIVE ROSE BATHROOM BOTTLE         1   
+1444    536544     21774  DECORATIVE CATS BATHROOM BOTTLE         2   
+1445    536544     21786               POLKADOT RAIN HAT          4   
+1446    536544     21787            RAIN PONCHO RETROSPOT         2   
+1447    536544     21790               VINTAGE SNAP CARDS         9   
+
+             InvoiceDate  UnitPrice CustomerID         Country  check_cancel  
+1443 2010-12-01 14:32:00       2.51       None  United Kingdom         False  
+1444 2010-12-01 14:32:00       2.51       None  United Kingdom         False  
+1445 2010-12-01 14:32:00       0.85       None  United Kingdom         False  
+1446 2010-12-01 14:32:00       1.66       None  United Kingdom         False  
+1447 2010-12-01 14:32:00       1.66       None  United Kingdom         False  
+
+       InvoiceNo StockCode                     Description  Quantity  \
+541536    581498    85099B         JUMBO BAG RED RETROSPOT         5   
+541537    581498    85099C  JUMBO  BAG BAROQUE BLACK WHITE         4   
+541538    581498     85150   LADIES & GENTLEMEN METAL SIGN         1   
+541539    581498     85174               S/4 CACTI CANDLES         1   
+541540    581498       DOT                  DOTCOM POSTAGE         1   
+
+               InvoiceDate  UnitPrice CustomerID         Country  check_cancel  
+541536 2011-12-09 10:26:00       4.13       None  United Kingdom         False  
+541537 2011-12-09 10:26:00       4.13       None  United Kingdom         False  
+541538 2011-12-09 10:26:00       4.96       None  United Kingdom         False  
+541539 2011-12-09 10:26:00      10.79       None  United Kingdom         False  
+541540 2011-12-09 10:26:00    1714.17       None  United Kingdom         False  
+	Month	InvoiceNo
+0	2010-12	15323
+1	2011-01	13077
+2	2011-02	7178
+3	2011-03	8628
+4	2011-04	6454
+5	2011-05	7844
+6	2011-06	8792
+7	2011-07	11820
+8	2011-08	7476
+9	2011-09	9233
+10	2011-10	9750
+11	2011-11	18838
+12	2011-12	7807
+
+```
+<br>
+The output has shown a consistency in missing values in CustomerID every month. We can conclude that there’s nothing abnormal about this column. Next, we will handle the amount of missing values.
+**Handle missing values**
+```python
+## drop 25% missing UserID
+df = df[df['CustomerID'].notnull()]
+df.head()
+
+```
+Output:
+![alt text](/img/posts/python-handle-missing-value.png "Python EDA – Handle missing value")
+<br>
+**Overview duplicate value**
+```python
+#Check duplicate value
+df_duplication = df.duplicated(subset=["InvoiceNo", "StockCode","InvoiceDate","CustomerID"])
+print (df[df_duplication].shape)
+print ('')
+print (df.shape)
+
+```
+Output:
+```
+(10038, 11)
+
+(397884, 11)
+```
+<br>
+When we are looking at duplicates, the 4 columns that separate one transaction from the rest are InvoiceNo, StockCode, InvoiceDate, and CustomerID. Let’s examine the duplicates and provide a solution for it.
+**Reason for duplicate**
+```python
+# Reason for duplication 
+print(df[df_duplication].head())
+
+print('')
+
+print(df[(df.InvoiceNo == '536409') & (df.StockCode == 90199C)].head())
+
+```
+Output:
+```
+![alt text](/img/posts/python-duplicate-head.png "Python EDA – Duplicate Head")
+<br>
+![alt text](/img/posts/python-duplicate-trans.png "Python EDA – Duplicated transaction")
+
+```
+<br>
+**Handle duplicates**
+In this case, we will keep the first transaction and drop the rest of the duplicates
+```python
+# drop duplications
+df_drop_duplications = df.drop_duplicates(subset=["InvoiceNo", "StockCode","InvoiceDate","CustomerID"], keep = 'first')
+df_drop_duplications.shape
+
+```
+Output:
+```
+(387846, 11)
+```
 ___
 
 <br>
