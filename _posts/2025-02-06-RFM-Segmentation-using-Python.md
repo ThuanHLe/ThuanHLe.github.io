@@ -426,9 +426,11 @@ RFM analysis categorizes customers by purchase behavior, focusing on how they sh
 * Recency = The most recent date – the last day of order. It indicates engagement and potential interest. Customers who have purchased recently are more likely to respond to marketing efforts and promotions.
 * Frequency = How often each customer conducts a transaction. Frequent buyers have greater attachment to the business and can be targeted with loyalty programs or special offers.
 * Monetary = The total spending of each customer. Reflects customer value and profitability. High spenders are valuable for driving revenue and can be rewarded with exclusive perks.
+
+<br>
 <br>
 ```python
-# RFM
+#RFM
 import datetime as dt
 
 last_day = df['Day'].max()
@@ -486,7 +488,6 @@ Later, we will have to divide RFM scores into 5 groups using quantile for furthe
 <br>
 ```python
 # Handle outliers
-
 R_threshold = RFM_df['Recency'].quantile(0.95)
 F_threshold = RFM_df['Frequency'].quantile(0.95)
 M_threshold = RFM_df['Monetary'].quantile(0.95)
@@ -496,19 +497,6 @@ RFM_df_drop_outliers = RFM_df[(RFM_df.Recency <=  R_threshold) & \
                      (RFM_df.Monetary <=  M_threshold)]
 
 RFM_df_drop_outliers.shape
-
-
-# def find_outliers_IQR(df):
-
-#    q1=df.quantile(0.25)
-
-#    q3=df.quantile(0.75)
-
-#    IQR=q3-q1
-
-#    outliers = df[((df<(q1-1.5*IQR)) | (df>(q3+1.5*IQR)))]
-
-#    return outliers
 
 ```
 Output
