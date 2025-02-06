@@ -1,7 +1,7 @@
 ---
 layout: post
 title: RFM Segmentation using Python
-image: "/posts/customer-segmentation.png"
+image: "/posts/ab-testing-title-img.png"
 tags: [Data Cleaning, Data Wrangling, Data Analysis, Visualization, Python]
 ---
 
@@ -28,22 +28,21 @@ To celebrate Christmas and the New Year, the Marketing department aims to launch
 The Marketing Director has suggested using the RFM (Recency, Frequency, Monetary) model. In the past, when the company was smaller, the team could manually calculate and segment customers using Excel. However, given the current data volume, they request the Data team to develop an automated segmentation pipeline using Python.
 
 <br>
-<br>
 ### Actions <a name="overview-actions"></a>
 
 For this assignment, we need to conduct exploratory data analysis (EDA) and visualize the distribution of RFM Modeling to better understand the distribution of the user profile, the change of the profile by time, and the change of the profile by specific location
 
 In term of exploratory data analysis, we could follow these steps:
-* Understand about the data (data type, data value)
-*Check missing data type & handling missing data
-*Check duplicated data type & handle duplicated data
-*Check outliers & handle outliers
+* Understand about the data (data type, data value).
+* Check missing data type & handling missing data.
+* Check duplicated data type & handle duplicated data.
+* Check outliers & handle outliers.
 
 After that, we visualize user profile with seaborn and matplotlib library to find insights and suggest appropriate actions for our marketing campaign.
-*Overal distribution of the RFM modelling (Learning + Insight)
-*The change for distribution of RFM Modeling throughout the time (Learning + Insight)
-*Understand the customer segmentation by location (Learning + Insight)
-*Understand the customer segmenation by the date user entered the product.
+* Overal distribution of the RFM modelling (Learning + Insight).
+* The change for distribution of RFM Modeling throughout the time (Learning + Insight).
+* Understand the customer segmentation by location (Learning + Insight).
+* Understand the customer segmenation by the date user entered the product.
 
 ___
 
@@ -52,14 +51,9 @@ ___
 #### Exploratory Data Analysis
 For this task, we are looking to import packages, understand about the data type & value, detect inappropriate data, handle missing data and duplicates
 
-<br>
-
 **Import packages**
 
-
-<br>
 ```python
-
 # Import Packages
 ! pip install pandas-profiling
 ! pip install pydantic-settings
@@ -77,7 +71,6 @@ import squarify    # pip install squarify (algorithm for treemap)
 ```
 <br>
 #### Understand about the data
-<br>
 **Load data set**
 <br>
 ```python
@@ -110,7 +103,6 @@ df = pd.read_excel(path + 'ecommerce retail.xlsx', sheet_name = 'ecommerce retai
 df.head()
 
 ```
-<br>
 ___
 
 <br>
