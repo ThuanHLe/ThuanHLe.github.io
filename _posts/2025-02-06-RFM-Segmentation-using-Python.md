@@ -294,6 +294,7 @@ check_cancel	0	0.000000
 ```
 <br>
 **Check the reason of missing value in CustomerID**
+<br>
 Approximately 25% of CustomerID is missing value. Firstly, we would need to look at the head and tail of the data to suggest some of the hypotheses behind the missing value. My hypothesis is that there could be system errors that cause the missing value. The next step is I will group missing customers by month to see the pattern of missing value in CustomerID.
 ```python
 # Reason why CustomerID has a lot of nulls
@@ -686,10 +687,10 @@ ___
 # Discussion <a name="discussion"></a>
 
 To sum up, The **At Risk** and **Cannot Lose Them** customer segments play a vital role, as they account for a large share of the customer base and significantly impact revenue.
-The **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising* segments constitute a significant share of the customer base. However, the majority of these customers have low spending levels and make a limited contribution to overall revenue.
+The **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising** segments constitute a significant share of the customer base. However, the majority of these customers have low spending levels and make a limited contribution to overall revenue.
 In the last quarter, the number of **Hibernating** customers has risen sharply, which is a concerning trend. These customers generally perform poorly across all three RFM metrics, indicating low engagement and spending.  As well as customer spending has decreased since December 2010.
 
 **Action**: 
 * Provide a long-term plan to attract customers and increase customer spending habits
 * Come up with a promotion plan for **At Risk** and **Cannot Lose Them** customer segments. 
-* Cross selling & develop new products that potentially interest the **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising* segments
+* Cross selling & develop new products that potentially interest the **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising** segments
