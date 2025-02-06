@@ -485,8 +485,8 @@ Output for 3 graphs:
 <br>
 Later, we will have to divide RFM scores into 5 groups using quantile for further analysis. By doing that, we realize that outliers would play a significant role in shifting our data on the wrong scale. Since that would heavily influence our results, we would need to get rid of outliers. I will present 2 ways that we could eliminate outliers
 <br>
-* Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
-
+Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
+<br>
 
 ```python
 # Handle outliers
