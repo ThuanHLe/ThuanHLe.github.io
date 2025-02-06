@@ -427,7 +427,7 @@ RFM analysis categorizes customers by purchase behavior, focusing on how they sh
 * Frequency = How often each customer conducts a transaction. Frequent buyers have greater attachment to the business and can be targeted with loyalty programs or special offers.
 * Monetary = The total spending of each customer. Reflects customer value and profitability. High spenders are valuable for driving revenue and can be rewarded with exclusive perks.
 
-<br>
+
 <br>
 ```python
 #RFM
@@ -461,6 +461,7 @@ Start_Month	datetime64[ns]
 dtype: object
 ```
 
+
 <br>
 Now, we are looking at the first 5 rows of RFM table we just created
 <br>
@@ -485,8 +486,8 @@ Output for 3 graphs:
 Later, we will have to divide RFM scores into 5 groups using quantile for further analysis. By doing that, we realize that outliers would play a significant role in shifting our data on the wrong scale. Since that would heavily influence our results, we would need to get rid of outliers. I will present 2 ways that we could eliminate outliers
 <br>
 * Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
-<br>
-<br>
+
+
 ```python
 # Handle outliers
 R_threshold = RFM_df['Recency'].quantile(0.95)
@@ -498,13 +499,14 @@ RFM_df_drop_outliers = RFM_df[(RFM_df.Recency <=  R_threshold) & \
                      (RFM_df.Monetary <=  M_threshold)]
 
 RFM_df_drop_outliers.shape
-
 ```
+
+
 Output
 ```
 (3795, 6)
 ```
-<br>
+
 **Graphs after drop outliers**
 ```python
 # RFM_df_drop_outliers
@@ -513,6 +515,8 @@ sns.boxplot(x = RFM_df_drop_outliers["Frequency"])
 sns.boxplot(x = RFM_df_drop_outliers["Monetary"])
 
 ```
+
+
 Output of 3 graphs after drop outliers:
 <br>
 ![alt text](/img/posts/python-recency-drop.png "Python EDA – Recency Drop Outliers")
@@ -610,7 +614,6 @@ Recommended Actions: Strengthen cross-selling initiatives and promotional strate
 
 <br>
 ## RFM Distribution throughout the time
-<br>
 We continue to pivot and group user by customer volume & spending by each month.
 
 ### RFM Customer Volume Distribution by Month
