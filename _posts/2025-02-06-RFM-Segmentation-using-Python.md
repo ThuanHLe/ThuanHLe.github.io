@@ -13,7 +13,7 @@ In this project we apply data cleaning, data analysis and visualization to segme
     - [Context](#overview-context)
     - [Actions](#overview-actions)
 - [01. Data Overview & Preparation](#data-overview)
-- [02. Applying Chi-Square Test For Independence](#chi-square-application)
+- [02.Data Processing](# data-processing)
 - [03. Analysing The Results](#chi-square-results)
 - [04. Discussion](#discussion)
 
@@ -357,6 +357,7 @@ Output:
 ```
 <br>
 The output has shown a consistency in missing values in CustomerID every month. We can conclude that there’s nothing abnormal about this column. Next, we will handle the amount of missing values.
+<br>
 **Handle missing values**
 ```python
 ## drop 25% missing UserID
@@ -384,6 +385,7 @@ Output:
 ```
 <br>
 When we are looking at duplicates, the 4 columns that separate one transaction from the rest are InvoiceNo, StockCode, InvoiceDate, and CustomerID. Let’s examine the duplicates and provide a solution for it.
+<br>
 **Reason for duplicate**
 ```python
 # Reason for duplication 
@@ -391,16 +393,14 @@ print(df[df_duplication].head())
 
 print('')
 
-print(df[(df.InvoiceNo == '536409') & (df.StockCode == 90199C)].head())
+print(df[(df.InvoiceNo == '536409') & (df.StockCode == '90199C')].head())
 
 ```
 Output:
-```
+<br>
 ![alt text](/img/posts/python-duplicate-head.png "Python EDA – Duplicate Head")
 <br>
 ![alt text](/img/posts/python-duplicate-trans.png "Python EDA – Duplicated transaction")
-
-```
 <br>
 **Handle duplicates**
 In this case, we will keep the first transaction and drop the rest of the duplicates
@@ -417,76 +417,156 @@ Output:
 ___
 
 <br>
-# Applying Chi-Square Test For Independence <a name="chi-square-application"></a>
+# Data Processing – RFM Model <a name="data-processing"></a>
 
 <br>
-#### State Hypotheses & Acceptance Criteria For Test
-
-The very first thing we need to do in any form of Hypothesis Test is state our Null Hypothesis, our Alternate Hypothesis, and the Acceptance Criteria (more details on these in the section above)
-
-In the code below we code these in explcitly & clearly so we can utilise them later to explain the results.  We specify the common Acceptance Criteria value of 0.05.
-
+#### RFM (Recency, Frequency, Monetary)
+RFM analysis categorizes customers by purchase behavior, focusing on how they shop rather than who they are. This makes it a more actionable approach for sales-driven strategies. In order to calculate the RFM score, there are several steps that needed to be taken:
+* Recency = The most recent date – the last day of order. It indicates engagement and potential interest. Customers who have purchased recently are more likely to respond to marketing efforts and promotions.
+* Frequency = How often each customer conducts a transaction. Frequent buyers have greater attachment to the business and can be targeted with loyalty programs or special offers.
+* Monetary = The total spending of each customer. Reflects customer value and profitability. High spenders are valuable for driving revenue and can be rewarded with exclusive perks.
 ```python
+# RFM
+import datetime as dt
 
-# specify hypotheses & acceptance criteria for test
-null_hypothesis = "There is no relationship between mailer type and signup rate.  They are independent"
-alternate_hypothesis = "There is a relationship between mailer type and signup rate.  They are not independent"
-acceptance_criteria = 0.05
+last_day = df['Day'].max()
+df['cost'] = df['Quantity'] * df['UnitPrice']
+
+RFM_df = df.groupby('CustomerID').agg(
+    Recency = ('Day', lambda x: last_day - x.max()),
+    Frequency = ('CustomerID','count'),
+    Monetary = ('cost','sum'),
+    Start_Day = ('Day', 'min')).reset_index()
+
+RFM_df['Recency'] = RFM_df['Recency'].dt.days.astype('int16')
+RFM_df['Start_Day'] = pd.to_datetime(RFM_df['Start_Day'])
+RFM_df['Start_Month'] = RFM_df['Start_Day'].apply(lambda x : x.replace(day=1))
+
+RFM_df.dtypes
 
 ```
+Output:
+```
+CustomerID	object
+Recency	int16
+Frequency	int64
+Monetary	float64
+Start_Day	datetime64[ns]
+Start_Month	datetime64[ns]
 
+dtype: object
+```
 <br>
-#### Calculate Observed Frequencies & Expected Frequencies
-
-As mentioned in the section above, in a Chi-Square Test For Independence, the *observed frequencies* are the true values that we’ve seen, in other words the actual rates per group in the data itself.  The *expected frequencies* are what we would *expect* to see based on *all* of the data combined.
-
-The below code:
-
-* Summarises our dataset to a 2x2 matrix for *signup_flag* by *mailer_type*
-* Based on this, calculates the:
-    * Chi-Square Statistic
-    * p-value
-    * Degrees of Freedom
-    * Expected Values
-* Prints out the Chi-Square Statistic & p-value from the test
-* Calculates the Critical Value based upon our Acceptance Criteria & the Degrees Of Freedom
-* Prints out the Critical Value
-
+Now, we are looking at the first 5 rows of RFM table we just created
+<br>
+![alt text](/img/posts/python-RFM-head.png "Python EDA – RFM Head")
+<br>
+Next, we will examine outliers in our data. Outliers are unusual values in our dataset, and they can distort statistical analyses and violate their assumption. We will first look at the outliers and decide what to do with it.
 ```python
+#Plot RFM outliers
+sns.boxplot(x = RFM_df["Recency"])
+sns.boxplot(x = RFM_df["Frequency"])
+sns.boxplot(x = RFM_df["Monetary"])
 
-# aggregate our data to get observed values
-observed_values = pd.crosstab(campaign_data["mailer_type"], campaign_data["signup_flag"]).values
+```
+Output for 3 graphs:
+![alt text](/img/posts/python-recency.png "Python EDA – Recency Outliers")
+<br>
+![alt text](/img/posts/python-frequency.png "Python EDA – Frequency Outliers")
+<br>
+![alt text](/img/posts/python-monetary.png "Python EDA – Monetary Outliers")
+<br>
+Later, we will have to divide RFM scores into 5 groups using quantile for further analysis. By doing that, we realize that outliers would play a significant role in shifting our data on the wrong scale. Since that would heavily influence our results, we would need to get rid of outliers. I will present 2 ways that we could eliminate outliers
+*Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
+```python
+# Handle outliers
 
-# run the chi-square test
-chi2_statistic, p_value, dof, expected_values = chi2_contingency(observed_values, correction = False)
+R_threshold = RFM_df['Recency'].quantile(0.95)
+F_threshold = RFM_df['Frequency'].quantile(0.95)
+M_threshold = RFM_df['Monetary'].quantile(0.95)
 
-# print chi-square statistic
-print(chi2_statistic)
->> 1.94
+RFM_df_drop_outliers = RFM_df[(RFM_df.Recency <=  R_threshold) & \
+                     (RFM_df.Frequency <=  F_threshold) & \
+                     (RFM_df.Monetary <=  M_threshold)]
 
-# print p-value
-print(p_value)
->> 0.16
+RFM_df_drop_outliers.shape
 
-# find the critical value for our test
-critical_value = chi2.ppf(1 - acceptance_criteria, dof)
 
-# print critical value
-print(critical_value)
->> 3.84
+# def find_outliers_IQR(df):
+
+#    q1=df.quantile(0.25)
+
+#    q3=df.quantile(0.75)
+
+#    IQR=q3-q1
+
+#    outliers = df[((df<(q1-1.5*IQR)) | (df>(q3+1.5*IQR)))]
+
+#    return outliers
+
+```
+Output
+```
+(3795, 6)
 
 ```
 <br>
-Based upon our observed values, we can give this all some context with the sign-up rate of each group.  We get:
+**Graphs after drop outliers**
+```python
+# RFM_df_drop_outliers
+sns.boxplot(x = RFM_df_drop_outliers["Recency"])
+sns.boxplot(x = RFM_df_drop_outliers["Frequency"])
+sns.boxplot(x = RFM_df_drop_outliers["Monetary"])
 
-* Mailer 1 (Low Cost): **32.8%** signup rate
-* Mailer 2 (High Cost): **37.8%** signup rate
+```
+Output of 3 graphs after drop outliers:
+![alt text](/img/posts/python-recency-drop.png "Python EDA – Recency Drop Outliers")
+<br>
+![alt text](/img/posts/python-frequency-drop.png "Python EDA – Frequency Drop Outliers")
+<br>
+![alt text](/img/posts/python-monetary-drop.png "Python EDA – Monetary Drop Outliers")
+<br>
 
-From this, we can see that the higher cost mailer does lead to a higher signup rate.  The results from our Chi-Square Test will provide us more information about how confident we can be that this difference is robust, or if it might have occured by chance.
+We will continue to map the score from 1-5 for each R, F, M columns
+```python
+# Using qcut to create R, F, M
+RFM_df['R'] = pd.qcut(RFM_df["Recency"], 5, labels = range(1, 6)).astype(str)
+RFM_df['F'] = pd.qcut(RFM_df["Frequency"], 5, labels = range(1, 6)).astype(str)
+RFM_df['M'] = pd.qcut(RFM_df["Monetary"], 5, labels = range(1, 6)).astype(str)
+RFM_df['RFM'] = RFM_df.apply(lambda x: x.R + x.F + x.M, axis = 1)
+RFM_df.head()
+```
+Output:
+![alt text](/img/posts/python-qcut.png "Python Data Analysis – QCut")
+<br>
+Next step, we will import a segmentation file to merge each segment to equivalent RFM score
+```python
+# Import segmentation file
+seg = pd.read_excel(path + 'ecommerce retail.xlsx', sheet_name = 'Segmentation')
+seg['RFM Score'] = seg['RFM Score'].str.split(',')
+seg = seg.explode('RFM Score').reset_index(drop = True)
 
-We have a Chi-Square Statistic of **1.94** and a p-value of **0.16**.  The critical value for our specified Acceptance Criteria of 0.05 is **3.84**
+# Merge proper Segmentation
+RFM_df_final = RFM_df.merge(seg, how = 'left', left_on = 'RFM', right_on = 'RFM Score')
+RFM_df_final.head()
 
-**Note** When applying the Chi-Square Test above, we use the parameter *correction = False* which means we are applying what is known as the *Yate's Correction* which is applied when your Degrees of Freedom is equal to one.  This correction helps to prevent overestimation of statistical signficance in this case.
+```
+Output:
+![alt text](/img/posts/python-merge-seg.png "Python Data Analysis – Merge Seg")
+<br>
+There might be some extra space in RFM Score column when we import it from Excel, which might prevent tables from mapping correctly. We will need to clean up that extra space.
+```python
+# remove space of Column "RFM Score"
+seg['RFM Score'] = seg['RFM Score'].apply(lambda x: x.replace(" ", ""))
+
+#Merge again after removing extra space
+RFM_df_final = RFM_df.merge(seg, how = 'left', left_on = 'RFM', right_on = 'RFM Score')
+RFM_df_final.head()
+
+```
+Output:
+![alt text](/img/posts/python-merge-seg-nospace.png "Python Data Analysis – Merge Seg No Space")
+<br>
 
 ___
 
