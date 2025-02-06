@@ -13,8 +13,8 @@ In this project we apply data cleaning, data analysis and visualization to segme
     - [Context](#overview-context)
     - [Actions](#overview-actions)
 - [01. Data Overview & Preparation](#data-overview)
-- [02.Data Processing](# data-processing)
-- [03. Visualization RFM Model](# visualize-rfm)
+- [02. Data Processing](#data-processing)
+- [03. Visualization RFM Model](#visualize-rfm)
 - [04. Discussion](#discussion)
 
 ___
@@ -685,10 +685,11 @@ ___
 <br>
 # Discussion <a name="discussion"></a>
 
-While we saw that the higher cost Mailer 2 had a higher signup rate (37.8%) than the lower cost Mailer 1 (32.8%) it appears that this difference is not significant, at least at our Acceptance Criteria of 0.05.
+To sum up, The **At Risk** and **Cannot Lose Them** customer segments play a vital role, as they account for a large share of the customer base and significantly impact revenue.
+The **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising* segments constitute a significant share of the customer base. However, the majority of these customers have low spending levels and make a limited contribution to overall revenue.
+In the last quarter, the number of **Hibernating** customers has risen sharply, which is a concerning trend. These customers generally perform poorly across all three RFM metrics, indicating low engagement and spending.  As well as customer spending has decreased since December 2010.
 
-Without running this Hypothesis Test, the client may have concluded that they should always look to go with higher cost mailers - and from what we've seen in this test, that may not be a great decision.  It would result in them spending more, but not *necessarily* gaining any extra revenue as a result
-
-Our results here also do not say that there *definitely isn't a difference between the two mailers* - we are only advising that we should not make any rigid conclusions *at this point*.  
-
-Running more A/B Tests like this, gathering more data, and then re-running this test may provide us, and the client more insight!
+**Action**: 
+* Provide a long-term plan to attract customers and increase customer spending habits
+* Come up with a promotion plan for **At Risk** and **Cannot Lose Them** customer segments. 
+* Cross selling & develop new products that potentially interest the **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising* segments
