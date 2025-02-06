@@ -403,6 +403,7 @@ Output:
 ![alt text](/img/posts/python-duplicate-trans.png "Python EDA – Duplicated transaction")
 <br>
 **Handle duplicates**
+<br>
 In this case, we will keep the first transaction and drop the rest of the duplicates
 ```python
 # drop duplications
@@ -425,6 +426,7 @@ RFM analysis categorizes customers by purchase behavior, focusing on how they sh
 * Recency = The most recent date – the last day of order. It indicates engagement and potential interest. Customers who have purchased recently are more likely to respond to marketing efforts and promotions.
 * Frequency = How often each customer conducts a transaction. Frequent buyers have greater attachment to the business and can be targeted with loyalty programs or special offers.
 * Monetary = The total spending of each customer. Reflects customer value and profitability. High spenders are valuable for driving revenue and can be rewarded with exclusive perks.
+<br>
 ```python
 # RFM
 import datetime as dt
@@ -443,8 +445,8 @@ RFM_df['Start_Day'] = pd.to_datetime(RFM_df['Start_Day'])
 RFM_df['Start_Month'] = RFM_df['Start_Day'].apply(lambda x : x.replace(day=1))
 
 RFM_df.dtypes
-
 ```
+<br>
 Output:
 ```
 CustomerID	object
@@ -456,6 +458,7 @@ Start_Month	datetime64[ns]
 
 dtype: object
 ```
+
 <br>
 Now, we are looking at the first 5 rows of RFM table we just created
 <br>
@@ -470,6 +473,7 @@ sns.boxplot(x = RFM_df["Monetary"])
 
 ```
 Output for 3 graphs:
+<br>
 ![alt text](/img/posts/python-recency.png "Python EDA – Recency Outliers")
 <br>
 ![alt text](/img/posts/python-frequency.png "Python EDA – Frequency Outliers")
@@ -477,7 +481,9 @@ Output for 3 graphs:
 ![alt text](/img/posts/python-monetary.png "Python EDA – Monetary Outliers")
 <br>
 Later, we will have to divide RFM scores into 5 groups using quantile for further analysis. By doing that, we realize that outliers would play a significant role in shifting our data on the wrong scale. Since that would heavily influence our results, we would need to get rid of outliers. I will present 2 ways that we could eliminate outliers
-*Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
+<br>
+* Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
+<br>
 ```python
 # Handle outliers
 
@@ -508,7 +514,6 @@ RFM_df_drop_outliers.shape
 Output
 ```
 (3795, 6)
-
 ```
 <br>
 **Graphs after drop outliers**
@@ -520,6 +525,7 @@ sns.boxplot(x = RFM_df_drop_outliers["Monetary"])
 
 ```
 Output of 3 graphs after drop outliers:
+<br>
 ![alt text](/img/posts/python-recency-drop.png "Python EDA – Recency Drop Outliers")
 <br>
 ![alt text](/img/posts/python-frequency-drop.png "Python EDA – Frequency Drop Outliers")
@@ -537,6 +543,7 @@ RFM_df['RFM'] = RFM_df.apply(lambda x: x.R + x.F + x.M, axis = 1)
 RFM_df.head()
 ```
 Output:
+<br>
 ![alt text](/img/posts/python-qcut.png "Python Data Analysis – QCut")
 <br>
 Next step, we will import a segmentation file to merge each segment to equivalent RFM score
@@ -552,6 +559,7 @@ RFM_df_final.head()
 
 ```
 Output:
+<br>
 ![alt text](/img/posts/python-merge-seg.png "Python Data Analysis – Merge Seg")
 <br>
 There might be some extra space in RFM Score column when we import it from Excel, which might prevent tables from mapping correctly. We will need to clean up that extra space.
@@ -565,6 +573,7 @@ RFM_df_final.head()
 
 ```
 Output:
+<br>
 ![alt text](/img/posts/python-merge-seg-nospace.png "Python Data Analysis – Merge Seg No Space")
 <br>
 
