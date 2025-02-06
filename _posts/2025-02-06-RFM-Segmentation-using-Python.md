@@ -105,6 +105,7 @@ df.head()
 ```
 <br>
 ```
+Output:
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 541909 entries, 0 to 541908
 Data columns (total 8 columns):
@@ -122,7 +123,7 @@ dtypes: datetime64[ns](1), float64(2), int64(1), object(4)
 memory usage: 33.1+ MB
 None
 
-            Quantity                    InvoiceDate      UnitPrice  \
+            Quantity                    InvoiceDate      UnitPrice  
 count  541909.000000                         541909  541909.000000   
 mean        9.552250  2011-07-04 13:34:57.156386048       4.611114   
 min    -80995.000000            2010-12-01 08:26:00  -11062.060000   
@@ -142,13 +143,10 @@ min     12346.000000
 max     18287.000000  
 std      1713.600303  
 
-	InvoiceNo	StockCode	Description	Quantity	InvoiceDate	UnitPrice	CustomerID	Country
-0	536365	85123A	WHITE HANGING HEART T-LIGHT HOLDER	6	2010-12-01 08:26:00	2.55	17850.0	United Kingdom
-1	536365	71053	WHITE METAL LANTERN	6	2010-12-01 08:26:00	3.39	17850.0	United Kingdom
-2	536365	84406B	CREAM CUPID HEARTS COAT HANGER	8	2010-12-01 08:26:00	2.75	17850.0	United Kingdom
-3	536365	84029G	KNITTED UNION FLAG HOT WATER BOTTLE	6	2010-12-01 08:26:00	3.39	17850.0	United Kingdom
-4	536365	84029E	RED WOOLLY HOTTIE WHITE HEART.	6	2010-12-01 08:26:00	3.39	17850.0	United Kingdom
 ```
+<br>
+![alt text](/img/posts/python-table-info.png "Python EDA – Table Info")
+<br>
 ___
 
 <br>
