@@ -14,7 +14,7 @@ In this project we apply data cleaning, data analysis and visualization to segme
     - [Actions](#overview-actions)
 - [01. Data Overview & Preparation](#data-overview)
 - [02.Data Processing](# data-processing)
-- [03. Analysing The Results](#chi-square-results)
+- [03. Visualization RFM Model](# visualize-rfm)
 - [04. Discussion](#discussion)
 
 ___
@@ -486,6 +486,7 @@ Later, we will have to divide RFM scores into 5 groups using quantile for furthe
 <br>
 * Note: A quantile is a cut point or line of division that splits a probability distribution into continuous intervals with equal probabilities. 
 <br>
+<br>
 ```python
 # Handle outliers
 R_threshold = RFM_df['Recency'].quantile(0.95)
@@ -568,36 +569,113 @@ Output:
 ___
 
 <br>
-# Analysing The Results <a name="chi-square-results"></a>
+# Visualization RFM Model <a name="visualize-rfm"></a>
 
-At this point we have everything we need to understand the results of our Chi-Square test - and just from the results above we can see that, since our resulting p-value of **0.16** is *greater* than our Acceptance Criteria of 0.05 then we will _retain_ the Null Hypothesis and conclude that there is no significant difference between the signup rates of Mailer 1 and Mailer 2.
-
-We can make the same conclusion based upon our resulting Chi-Square statistic of **1.94** being _lower_ than our Critical Value of **3.84**
-
-To make this script more dynamic, we can create code to automatically interpret the results and explain the outcome to us...
+We would like to understand the distribution of users to define which group/segment has contributed significantly to SuperStore. From there, the marketing team could customize a promotion plan for each group.
 
 ```python
+# Distribution using Customer Frequency and Monetary
+segment_by_user_count = RFM_df_final[['Segment','CustomerID']].groupby(['Segment']).count().reset_index().rename(columns = {'CustomerID':'user_volume'})
+segment_by_user_count['contribution_percent'] = round(segment_by_user_count['user_volume'] / segment_by_user_count['user_volume'].sum() * 100)
+segment_by_user_count['type'] = 'user contribution'
 
-# print the results (based upon p-value)
-if p_value <= acceptance_criteria:
-    print(f"As our p-value of {p_value} is lower than our acceptance_criteria of {acceptance_criteria} - we reject the null hypothesis, and conclude that: {alternate_hypothesis}")
-else:
-    print(f"As our p-value of {p_value} is higher than our acceptance_criteria of {acceptance_criteria} - we retain the null hypothesis, and conclude that: {null_hypothesis}")
+segment_by_spending = RFM_df_final[['Segment','Monetary']].groupby(['Segment']).sum().reset_index().rename(columns = {'Monetary':'spending'})
+segment_by_spending['contribution_percent'] = segment_by_spending['spending'] / segment_by_spending['spending'].sum() * 100
+segment_by_spending['type'] = 'spending contribution'
 
->> As our p-value of 0.16351 is higher than our acceptance_criteria of 0.05 - we retain the null hypothesis, and conclude that: There is no relationship between mailer type and signup rate.  They are independent
+segment_agg = pd.concat([segment_by_user_count, segment_by_spending])
+
+# Set the figure size
+plt.figure(figsize=(15, 8))
+sns.barplot(segment_agg, x="Segment", y="contribution_percent", hue="type")
+plt.title('The overal distribution of User Profile using RFM Model')
+
+# Show the plot
+plt.show()
+```
+<br>
+
+Output:
+<br>
+![alt text](/img/posts/python-distribute.png "Python Data Visualization – Distribution Graph")
+<br>
+
+The **At Risk** and **Cannot Lose Them** customer segments are critical, as they represent a significant portion of the customer base and contribute substantially to revenue. However, the high proportion of these segments is a warning sign, indicating that many customers have not engaged with the product for a long time and are at high risk of churn.
+
+Recommended Actions: Implement targeted promotional campaigns or personalized notifications to re-engage these customers and encourage product usage.
+
+On the other hand, the **Loyal**, **New Customer**, **Potential Loyalist**, and **Promising** segments also make up a large portion of the customer base. However, most of these customers have relatively low transaction values and contribute only modestly to overall revenue.
+
+Recommended Actions: Strengthen cross-selling initiatives and promotional strategies to drive higher consumption and increase customer lifetime value.
+
+<br>
+## RFM Distribution throughout the time
+<br>
+We continue to pivot and group user by customer volume & spending by each month.
+
+### RFM Customer Volume Distribution by Month
+```python
+# Process data to visualize stacked column chart with Ox = month, Oy = User volume, Stacked = Segment
+RFM_df_final_aggregate_month = RFM_df_final[['Start_Month','Segment','CustomerID','Monetary']]\
+                                           .groupby(['Start_Month','Segment']).agg({'CustomerID' : 'count', 'Monetary' : 'sum'}).reset_index().rename(columns = {'CustomerID' : 'Customer_Volume'})
+
+RFM_df_final_aggregate_month['Start_Month'] = RFM_df_final_aggregate_month['Start_Month'].dt.date
+
+RFM_df_final_aggregate_month_pivot_customer = pd.pivot_table(RFM_df_final_aggregate_month, values='Customer_Volume', index = ['Start_Month'], columns = ['Segment']).reset_index()
+RFM_df_final_aggregate_month_pivot_customer.index = RFM_df_final_aggregate_month_pivot_customer.Start_Month
+RFM_df_final_aggregate_month_pivot_customer = RFM_df_final_aggregate_month_pivot_customer.fillna(0).drop(columns = 'Start_Month')
+
+Custom_colors = ['#845ec2', '#ffc75f', '#d65db1', '#f9f871', '#ff6f91', '#2c73d2', '#ff9671', '#008e9b', '#008f7a', '#b39cd0', '#fbeaff']
+ax = RFM_df_final_aggregate_month_pivot_customer.plot(kind='bar', stacked=True)
+
+plt.xticks(rotation=90)  # Rotate x-axis labels for better readability
+plt.tight_layout() # Adjust layout to prevent overlapping
+ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small', ncol=2)
+plt.title('User Distribution by Segmentation & User Enter Month')
+plt.show()
+
+```
+Output:
+<br>
+![alt text](/img/posts/python-distribution-user-by-month.png "Python Data Visualization – Distribution of User by Month ")
+<br>
+
+In recent months (September, October, November), the number of **Hibernating** customers has increased significantly. This is a negative signal, as Hibernating customers typically exhibit poor performance across all three RFM metrics.
+
+Recommended Actions: Further investigate the root causes by analyzing user profiles (e.g., demographics) compared to the general user base to identify any distinctive characteristics. Based on these insights, develop strategies to attract high-value customers while filtering out low-value segments.
+
+The declining customer trend over the past months is also a concerning sign.
+
+Recommended Actions: Implement strategies to sustain a stable customer base over time and prevent further decline.
 
 
-# print the results (based upon Chi Square Statistic)
-if chi2_statistic >= critical_value:
-    print(f"As our chi-square statistic of {chi2_statistic} is higher than our critical value of {critical_value} - we reject the null hypothesis, and conclude that: {alternate_hypothesis}")
-else:
-    print(f"As our chi-square statistic of {chi2_statistic} is lower than our critical value of {critical_value} - we retain the null hypothesis, and conclude that: {null_hypothesis}")
-    
->> As our chi-square statistic of 1.9414 is lower than our critical value of 3.841458820694124 - we retain the null hypothesis, and conclude that: There is no relationship between mailer type and signup rate.  They are independent
+### RFM Customer Spending Distribution by Month
+<br>
+
+```python
+RFM_df_final_aggregate_month_pivot_spending = pd.pivot_table(RFM_df_final_aggregate_month, values='Monetary', index = ['Start_Month'], columns = ['Segment']).reset_index()
+RFM_df_final_aggregate_month_pivot_spending.index = RFM_df_final_aggregate_month_pivot_spending.Start_Month
+RFM_df_final_aggregate_month_pivot_spending = RFM_df_final_aggregate_month_pivot_spending.fillna(0).drop(columns = 'Start_Month')
+
+Custom_colors = ['#845ec2', '#ffc75f', '#d65db1', '#f9f871', '#ff6f91', '#2c73d2', '#ff9671', '#008e9b', '#008f7a', '#b39cd0', '#fbeaff']
+ax = RFM_df_final_aggregate_month_pivot_spending.plot(kind='bar', stacked=True)
+
+plt.xticks(rotation=90)  # Rotate x-axis labels for better readability
+plt.tight_layout() # Adjust layout to prevent overlapping
+ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small', ncol=2)
+plt.title('Spending Distribution by Segmentation & User Enter Month')
+plt.show()
 
 ```
 <br>
-As we can see from the outputs of these print statements, we do indeed retain the null hypothesis.  We could not find enough evidence that the signup rates for Mailer 1 and Mailer 2 were different - and thus conclude that there was no significant difference.
+Output:
+<br>
+![alt text](/img/posts/python-distribution-money-by-month.png "Python Data Visualization – Distribution of User Spending by Month ")
+<br>
+
+The majority of spending comes from customers who joined the product in December 2010, which is a highly concerning signal.
+
+Recommended Actions: Develop long-term strategies to attract and retain new customers, ensuring a more sustainable revenue stream.
 
 ___
 
