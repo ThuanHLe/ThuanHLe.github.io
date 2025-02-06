@@ -103,9 +103,9 @@ df = pd.read_excel(path + 'ecommerce retail.xlsx', sheet_name = 'ecommerce retai
 df.head()
 
 ```
-<br>
-```
 Output:
+```
+
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 541909 entries, 0 to 541908
 Data columns (total 8 columns):
@@ -144,9 +144,126 @@ max     18287.000000
 std      1713.600303  
 
 ```
-<br>
 ![alt text](/img/posts/python-table-info.png "Python EDA – Table Info")
 <br>
+
+From the output above, we can see there’s negative number in Quantity & Unit Price column. Next, we would explore why it is negative.
+**Detect negative columns (Quantity <0)**
+<br>
+```python
+# Detect Quantity column < 0
+# Quick check why Quantity < 0
+print('Print values with Quantity < 0')
+print(df[df.Quantity < 0].head())
+print('')
+
+# Continue to check if Quantity < 0 values are from ‘cancelled’ transactions
+print(‘check if Quantity < 0 are from cancelled transaction')
+df['InvoiceNo'] = df['InvoiceNo'].astype(str)
+df['check_cancel'] = df['InvoiceNo'].apply(lambda x: True if x[0] == 'C' else False)
+print(df[(df.Quantity < 0) & (df.check_cancel == True)].head())
+
+print('')
+df[(df.Quantity < 0) & (df.check_cancel == False)].head()
+
+```
+ Output:
+```
+Print values with Quantity < 0
+    InvoiceNo StockCode                       Description  Quantity  \
+141   C536379         D                          Discount        -1   
+154   C536383    35004C   SET OF 3 COLOURED  FLYING DUCKS        -1   
+235   C536391     22556    PLASTERS IN TIN CIRCUS PARADE        -12   
+236   C536391     21984  PACK OF 12 PINK PAISLEY TISSUES        -24   
+237   C536391     21983  PACK OF 12 BLUE PAISLEY TISSUES        -24   
+
+            InvoiceDate  UnitPrice  CustomerID         Country  
+141 2010-12-01 09:41:00      27.50     14527.0  United Kingdom  
+154 2010-12-01 09:49:00       4.65     15311.0  United Kingdom  
+235 2010-12-01 10:24:00       1.65     17548.0  United Kingdom  
+236 2010-12-01 10:24:00       0.29     17548.0  United Kingdom  
+237 2010-12-01 10:24:00       0.29     17548.0  United Kingdom  
+
+check if Quantity < 0 are from cancelled transaction
+    InvoiceNo StockCode                       Description  Quantity  \
+141   C536379         D                          Discount        -1   
+154   C536383    35004C   SET OF 3 COLOURED  FLYING DUCKS        -1   
+235   C536391     22556    PLASTERS IN TIN CIRCUS PARADE        -12   
+236   C536391     21984  PACK OF 12 PINK PAISLEY TISSUES        -24   
+237   C536391     21983  PACK OF 12 BLUE PAISLEY TISSUES        -24   
+
+            InvoiceDate  UnitPrice  CustomerID         Country  check_cancel  
+141 2010-12-01 09:41:00      27.50     14527.0  United Kingdom          True  
+154 2010-12-01 09:49:00       4.65     15311.0  United Kingdom          True  
+235 2010-12-01 10:24:00       1.65     17548.0  United Kingdom          True  
+236 2010-12-01 10:24:00       0.29     17548.0  United Kingdom          True  
+237 2010-12-01 10:24:00       0.29     17548.0  United Kingdom          True  
+```
+![alt text](/img/posts/python-cancel-trans-table.png "Python EDA – Cancelled Transaction")
+
+<br>
+**Detect negative columns (Price <0)**
+```python
+# Detect why (Price < 0)
+# Quick check why Unit Price < 0
+print('Print values that UnitPrice < 0')
+df[df.UnitPrice < 0].head()
+
+```
+Output:
+![alt text](/img/posts/python-negative-price.png "Python EDA – Cancelled Transaction")
+
+<br>
+**Handle inappropriate data types and values**
+```python
+# Correct data types and values
+# Convert data type to the right format
+print(df.columns)
+print('')
+
+column_list = ['InvoiceNo','StockCode','Description','CustomerID','Country']
+for c in column_list:
+     df[c] = df[c].astype(str)
+
+# drop inappropriate data value 
+## drop data value has UnitPrice < 0
+df = df[df['UnitPrice'] > 0]
+## drop data has Quantity < 0
+df = df[df['Quantity'] > 0]
+## drop cancelled transaction
+df = df[df.check_cancel == False]
+df = df.replace('nan', None)
+df = df.replace('Nan',None)
+df.shape
+
+```
+Output:
+```
+Index(['InvoiceNo', 'StockCode', 'Description', 'Quantity', 'InvoiceDate',
+       'UnitPrice', 'CustomerID', 'Country', 'check_cancel'],
+      dtype='object')
+
+(530104, 9)
+```
+**Check data type again**
+```python
+df.dtypes
+```
+Output:
+```
+InvoiceNo	object
+StockCode	object
+Description	object
+Quantity	int64
+InvoiceDate	datetime64[ns]
+UnitPrice	float64
+CustomerID	object
+Country	object
+check_cancel	bool
+
+dtype: object
+```
+
 ___
 
 <br>
