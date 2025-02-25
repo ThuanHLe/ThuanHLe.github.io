@@ -5,7 +5,7 @@ image: "/posts/purchasing-cover-img.png"
 tags: [PowerBI, Data Viz]
 ---
 
-In this project we create a PowerBI dashboard to ensure smooth operation for supply chain department 
+In this project we create a PowerBI dashboard to ensure smooth operation for supply chain department.
 
 # Table of contents
 
@@ -27,17 +27,11 @@ ___
 The Purchasing team will be responsible for procuring goods, raw materials, and semi-finished products to support production.
 The leadership expects that goods are ordered in sufficient quantities for sales, on time, and at optimized costs.
 
-<br>
-<br>
 ### Business Question <a name="overview-businessquestion"></a>
 
 Create an overview dashboard for stakeholders that displays the fulfillment rate & COGS (cost of goods sold) of products and helps identify which product or category needs further review.
 
 Develop solutions to improve the situation and optimize costs.
-
-<br>
-<br>
-
 
 ___
 
@@ -64,7 +58,6 @@ There are 5 steps of design thinking:
 
 ![alt text](/img/posts/pro-review-img.png "PowerBI – Prototype & Review Step")
 
-<br>
 ___
 
 <br>
