@@ -14,7 +14,7 @@ In this project we create a PowerBI dashboard to ensure smooth operation for sup
     - [Business Question](#overview-businessquestion)
 - [01. Design Thinking](#design-thinking)
 - [02. Data Visualization](#data-visualization)
-- [03. Applying Chi-Square Test For Independence](#chi-square-application)
+- [03. Insights & Detail Analysis](#detail-analysis)
 - [04. Analysing The Results](#chi-square-results)
 - [05. Discussion](#discussion)
 
@@ -72,7 +72,7 @@ ___
 ![alt text](/img/posts/powerbi-viz-2.png "PowerBI – Fulfillment drillthrough")
 
 <br>
-#### 3. COGS overview
+#### 3. COGS Overview
 
 ![alt text](/img/posts/powerbi-viz-3.png "PowerBI – COGS overview")
 
@@ -84,76 +84,11 @@ ___
 ___
 
 <br>
-# Applying Chi-Square Test For Independence <a name="chi-square-application"></a>
+# Insights & Detail Analysis <a name="detail-analysis"></a>
 
 <br>
-#### State Hypotheses & Acceptance Criteria For Test
 
-The very first thing we need to do in any form of Hypothesis Test is state our Null Hypothesis, our Alternate Hypothesis, and the Acceptance Criteria (more details on these in the section above)
-
-In the code below we code these in explcitly & clearly so we can utilise them later to explain the results.  We specify the common Acceptance Criteria value of 0.05.
-
-```python
-
-# specify hypotheses & acceptance criteria for test
-null_hypothesis = "There is no relationship between mailer type and signup rate.  They are independent"
-alternate_hypothesis = "There is a relationship between mailer type and signup rate.  They are not independent"
-acceptance_criteria = 0.05
-
-```
-
-<br>
-#### Calculate Observed Frequencies & Expected Frequencies
-
-As mentioned in the section above, in a Chi-Square Test For Independence, the *observed frequencies* are the true values that we’ve seen, in other words the actual rates per group in the data itself.  The *expected frequencies* are what we would *expect* to see based on *all* of the data combined.
-
-The below code:
-
-* Summarises our dataset to a 2x2 matrix for *signup_flag* by *mailer_type*
-* Based on this, calculates the:
-    * Chi-Square Statistic
-    * p-value
-    * Degrees of Freedom
-    * Expected Values
-* Prints out the Chi-Square Statistic & p-value from the test
-* Calculates the Critical Value based upon our Acceptance Criteria & the Degrees Of Freedom
-* Prints out the Critical Value
-
-```python
-
-# aggregate our data to get observed values
-observed_values = pd.crosstab(campaign_data["mailer_type"], campaign_data["signup_flag"]).values
-
-# run the chi-square test
-chi2_statistic, p_value, dof, expected_values = chi2_contingency(observed_values, correction = False)
-
-# print chi-square statistic
-print(chi2_statistic)
->> 1.94
-
-# print p-value
-print(p_value)
->> 0.16
-
-# find the critical value for our test
-critical_value = chi2.ppf(1 - acceptance_criteria, dof)
-
-# print critical value
-print(critical_value)
->> 3.84
-
-```
-<br>
-Based upon our observed values, we can give this all some context with the sign-up rate of each group.  We get:
-
-* Mailer 1 (Low Cost): **32.8%** signup rate
-* Mailer 2 (High Cost): **37.8%** signup rate
-
-From this, we can see that the higher cost mailer does lead to a higher signup rate.  The results from our Chi-Square Test will provide us more information about how confident we can be that this difference is robust, or if it might have occured by chance.
-
-We have a Chi-Square Statistic of **1.94** and a p-value of **0.16**.  The critical value for our specified Acceptance Criteria of 0.05 is **3.84**
-
-**Note** When applying the Chi-Square Test above, we use the parameter *correction = False* which means we are applying what is known as the *Yate's Correction* which is applied when your Degrees of Freedom is equal to one.  This correction helps to prevent overestimation of statistical signficance in this case.
+<iframe src="https://1drv.ms/p/c/4fa8ee64d7ee142a/IQRvjypHb7kXTatWvKtF1iFRAYCxfzhd5XDKwzhfyo12vW0?em=2&amp;wdAr=1.7777777777777777" width="476px" height="288px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ___
 
