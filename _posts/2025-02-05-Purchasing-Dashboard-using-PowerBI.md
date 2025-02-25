@@ -87,7 +87,7 @@ ___
 
 <br>
 
-<iframe src="https://1drv.ms/p/c/4fa8ee64d7ee142a/IQRvjypHb7kXTatWvKtF1iFRAYCxfzhd5XDKwzhfyo12vW0?em=2&amp;wdAr=1.7777777777777777" width="1090px" height="700px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<iframe src="https://1drv.ms/p/c/4fa8ee64d7ee142a/IQRvjypHb7kXTatWvKtF1iFRAYCxfzhd5XDKwzhfyo12vW0?em=2&amp;wdAr=1.7777777777777777" width="1090px" height="500px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 ___
 
 <br>
