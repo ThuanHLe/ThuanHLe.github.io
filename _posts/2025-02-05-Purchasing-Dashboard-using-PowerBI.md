@@ -87,7 +87,7 @@ ___
 
 <br>
 
-<iframe src="https://1drv.ms/p/c/4fa8ee64d7ee142a/IQRvjypHb7kXTatWvKtF1iFRAYCxfzhd5XDKwzhfyo12vW0?em=2&amp;wdAr=1.7777777777777777" width="1090px" height="900px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<iframe src="https://1drv.ms/p/c/4fa8ee64d7ee142a/IQRvjypHb7kXTatWvKtF1iFRAYCxfzhd5XDKwzhfyo12vW0?em=2&amp;wdAr=1.7777777777777777" width="1090px" height="700px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 ___
 
 <br>
@@ -99,4 +99,6 @@ Overall, the company performed notably well over the year. However, there are a 
 * Needs to pay attention to Helmet Product with a very low Fulfillment rate as well as delivery day (takes longer than 35 days).
 * Continue developing strategy for Clothing Category (rapid increase from 2013 to 2014).
 * Optimize unit price for each product from vendors that have the same Fulfillment rate & Vendor Rating.
+
+
 
