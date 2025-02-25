@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Purchasing Dashboard Using PowerBI
-image: "/posts/purchasing-cover-image.png"
+image: "/posts/purchasing-cover-img.png"
 tags: [PowerBI, Data Viz]
 ---
 
