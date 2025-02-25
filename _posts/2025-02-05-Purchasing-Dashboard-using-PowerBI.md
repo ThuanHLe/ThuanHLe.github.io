@@ -60,7 +60,6 @@ There are 5 steps of design thinking:
 
 ___
 
-<br>
 # Data Visualization  <a name="data-visualization"></a>
 <br>
 #### 1. Fulfillment Overview
@@ -70,17 +69,17 @@ ___
 <br>
 #### 2. Fulfillment Drillthrough
 
-![alt text](/img/posts/ powerbi-viz-2.png "PowerBI – Fulfillment drillthrough")
+![alt text](/img/posts/powerbi-viz-2.png "PowerBI – Fulfillment drillthrough")
 
 <br>
 #### 3. COGS overview
 
-![alt text](/img/posts/ powerbi-viz-3.png "PowerBI – COGS overview")
+![alt text](/img/posts/powerbi-viz-3.png "PowerBI – COGS overview")
 
 <br>
 #### 4. COGS Drillthrough
 
-![alt text](/img/posts/ powerbi-viz-4.png "PowerBI – COGS drillthrough")
+![alt text](/img/posts/powerbi-viz-4.png "PowerBI – COGS drillthrough")
 
 ___
 
