@@ -13,7 +13,7 @@ In this project we create a PowerBI dashboard to ensure smooth operation for sup
     - [Context](#overview-context)
     - [Business Question](#overview-businessquestion)
 - [01. Design Thinking](#design-thinking)
-- [02. Data Overview & Preparation](#data-overview)
+- [02. Data Visualization](#data-visualization)
 - [03. Applying Chi-Square Test For Independence](#chi-square-application)
 - [04. Analysing The Results](#chi-square-results)
 - [05. Discussion](#discussion)
@@ -35,7 +35,7 @@ Develop solutions to improve the situation and optimize costs.
 
 ___
 
-# Design Thinking  <a name=" design-thinking "></a>
+# Design Thinking  <a name="design-thinking "></a>
 
 There are 5 steps of design thinking:
 <br>
@@ -61,58 +61,26 @@ There are 5 steps of design thinking:
 ___
 
 <br>
-# Data Overview & Preparation  <a name="data-overview"></a>
+# Data Visualization  <a name="data-visualization"></a>
+<br>
+#### 1. Fulfillment Overview
 
-In the client database, we have a *campaign_data* table which shows us which customers received each type of "Delivery Club" mailer, which customers were in the control group, and which customers joined the club as a result.
-
-For this task, we are looking to find evidence that the Delivery Club signup rate for customers that received "Mailer 1" (low cost) was different to those who received "Mailer 2" (high cost) and thus from the *campaign_data* table we will just extract customers in those two groups, and exclude customers who were in the control group.
-
-In the code below, we:
-
-* Load in the Python libraries we require for importing the data and performing the chi-square test (using scipy)
-* Import the required data from the *campaign_data* table
-* Exclude customers in the control group, giving us a dataset with Mailer 1 & Mailer 2 customers only
+![alt text](/img/posts/powerbi-viz-1.png "PowerBI – Fulfillment overview")
 
 <br>
-```python
+#### 2. Fulfillment Drillthrough
 
-# install the required python libraries
-import pandas as pd
-from scipy.stats import chi2_contingency, chi2
-
-# import campaign data
-campaign_data = ...
-
-# remove customers who were in the control group
-campaign_data = campaign_data.loc[campaign_data["mailer_type"] != "Control"]
-
-```
-<br>
-A sample of this data (the first 10 rows) can be seen below:
-<br>
-<br>
-
-| **customer_id** | **campaign_name** | **mailer_type** | **signup_flag** |
-|---|---|---|---|
-| 74 | delivery_club | Mailer1 | 1 |
-| 524 | delivery_club | Mailer1 | 1 |
-| 607 | delivery_club | Mailer2 | 1 |
-| 343 | delivery_club | Mailer1 | 0 |
-| 322 | delivery_club | Mailer2 | 1 |
-| 115 | delivery_club | Mailer2 | 0 |
-| 1 | delivery_club | Mailer2 | 1 |
-| 120 | delivery_club | Mailer1 | 1 |
-| 52 | delivery_club | Mailer1 | 1 |
-| 405 | delivery_club | Mailer1 | 0 |
-| 435 | delivery_club | Mailer2 | 0 |
+![alt text](/img/posts/ powerbi-viz-2.png "PowerBI – Fulfillment drillthrough")
 
 <br>
-In the DataFrame we have:
+#### 3. COGS overview
 
-* customer_id
-* campaign name
-* mailer_type (either Mailer1 or Mailer2)
-* signup_flag (either 1 or 0)
+![alt text](/img/posts/ powerbi-viz-3.png "PowerBI – COGS overview")
+
+<br>
+#### 4. COGS Drillthrough
+
+![alt text](/img/posts/ powerbi-viz-4.png "PowerBI – COGS drillthrough")
 
 ___
 
